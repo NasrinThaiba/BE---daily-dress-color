@@ -12,6 +12,7 @@ const Customer = require("./Models/Customer");
 const app = express();
 
 app.use(bodyParser.json());
+
 app.use(cors());
 
 const Port = process.env.PORT
@@ -23,6 +24,7 @@ mongoose
 .catch((err)=> console.log("Server is unable to connect", err))
 
 app.post("/api/register", async (req, res) => {
+
     const { username, password, email } = req.body;
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -30,15 +32,17 @@ app.post("/api/register", async (req, res) => {
     const customer = new Customer({ username, password: hashPassword, email});
 
     try {
-        await customer.save();
-        console.log(customer);
-        res.json({ message: "User registered successfully!!!" });
+      await customer.save();
+      console.log('Customer details:', customer);
+      res.json({ message: "User registered successfully!!!" });
     } catch (error) {
-        res.status(500).json({ message: "Error occurred during registration" });
+      console.error("Error during registration:", error);
+      res.status(500).json({ message: "Error occurred during registration" });
     }
 });
 
 app.post("/api/login", async(req,res)=>{
+    
     const {email, password} = req.body;
 
     if (!email || !password) {
